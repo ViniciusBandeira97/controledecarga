@@ -1,0 +1,15 @@
+.container {
+  width: 100%;
+  min-width: 0px;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  position: relative;
+}
+
+.content {
+  position: relative;
+
+  input {
+    background-color: var(--backgound);
+  }
+}
