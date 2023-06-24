@@ -14,8 +14,6 @@ export function ActiveLink({
   const asPath = useHref({});
   let isActive = false;
 
-  console.log(asPath);
-
   if (shouldMatchExactHref && asPath === rest.to) {
     isActive = true;
   }
@@ -27,8 +25,8 @@ export function ActiveLink({
   return (
     <Link {...rest}>
       {cloneElement(children, {
-        color: isActive ? "white" : "gray.50",
-        fontWeight: isActive ? "bold" : "normal",
+        color: isActive ? "white" : "gray.100",
+        fontWeight: isActive ? "bold" : "light",
         transition: "color 0.3s",
       })}
     </Link>

@@ -9,33 +9,32 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FaLock } from "react-icons/fa";
-import { IoMdMail } from "react-icons/io";
+import { FaLock, FaUser } from "react-icons/fa";
 import * as Yup from "yup";
 import { Input } from "../../components/Form/Input";
+import { useAuth } from "../../hook/useAuth";
 
 type SignInFormData = {
-  email: string;
-  password: string;
+  cpf: string;
+  senha: string;
 };
 
 const signInFormSchema = Yup.object().shape({
-  email: Yup.string().required("E-mail obrigatório").email("E-mail inválido"),
+  cpf: Yup.string().required("CPF obrigatório"),
   password: Yup.string().required("Senha obrigatório"),
 });
 
 export default function SignIn() {
+  const { signIn } = useAuth();
+  const toast = useToast();
+
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInFormSchema),
   });
   const { errors } = formState;
 
-  const toast = useToast();
-
   const HandleSignIn: SubmitHandler<SignInFormData> = async (data) => {
-    console.log(data);
-
-    const signInResponse = false;
+    const signInResponse = await signIn(data);
 
     if (signInResponse) {
       const { status, title } = signInResponse;
@@ -83,15 +82,12 @@ export default function SignIn() {
         >
           <Stack spacing="2">
             <Input
-              iconLeft={IoMdMail}
-              placeholder="E-mail"
-              type="email"
+              iconLeft={FaUser}
+              placeholder="CPF"
               error={
-                errors?.email?.message
-                  ? String(errors?.email?.message)
-                  : undefined
+                errors?.cpf?.message ? String(errors?.cpf?.message) : undefined
               }
-              {...register("email")}
+              {...register("cpf")}
             />
             <Input
               iconLeft={FaLock}

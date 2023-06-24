@@ -1,13 +1,11 @@
 import {
   Avatar,
   Box,
-  Link as CharkraLink,
   Flex,
   HStack,
   Image,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuGroup,
   MenuItem,
   MenuList,
@@ -15,7 +13,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { FaHome, FaTruck, FaUserFriends } from "react-icons/fa";
+import { useAuth } from "../../hook/useAuth";
 import { NavLink } from "./NavLink";
 
 interface NavbarProps {
@@ -23,6 +22,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ children }: NavbarProps) {
+  const { signOut } = useAuth();
+
   return (
     <Flex>
       <Flex
@@ -33,17 +34,25 @@ export function Navbar({ children }: NavbarProps) {
         flexDir="column"
         align="center"
         py="6"
+        px="3rem"
       >
-        <HStack>
+        <HStack w="full">
           <Image w="4rem" objectFit="contain" src="/public/logo.svg" />
           <Text color="white" fontWeight="bold" fontSize="2xl">
             PH Transporte
           </Text>
         </HStack>
 
-        <VStack mt="4rem">
-          <NavLink href="/dashboard">dashboard</NavLink>
-          <NavLink href="/users">usuarios</NavLink>
+        <VStack mt="4rem" w="full" align="start">
+          <NavLink href="/dashboard" icon={FaHome}>
+            Inicio
+          </NavLink>
+          <NavLink href="/users" icon={FaUserFriends}>
+            Usuários
+          </NavLink>
+          <NavLink href="/delivers" icon={FaTruck}>
+            Transportes
+          </NavLink>
         </VStack>
       </Flex>
       <Flex flexDir="column" flex={1}>
@@ -53,6 +62,7 @@ export function Navbar({ children }: NavbarProps) {
           bg="white"
           justify="space-between"
           px="4rem"
+          boxShadow='xl'
         >
           <Box></Box>
           <Menu>
@@ -65,22 +75,19 @@ export function Navbar({ children }: NavbarProps) {
               </Flex>
             </MenuButton>
             <MenuList zIndex="1000">
-              <MenuGroup title="Perfil">
-                <MenuItem>
+              <MenuGroup
+
+              // title="Perfil"
+              >
+                {/* <MenuItem>
                   <Link to="/conta">
                     <CharkraLink _hover={{ textDecoration: "none" }}>
                       Minha conta
                     </CharkraLink>
                   </Link>
                 </MenuItem>
-                <MenuDivider />
-                <MenuItem
-                  onClick={() => {
-                    alert("sair");
-                  }}
-                >
-                  Sair{" "}
-                </MenuItem>
+                <MenuDivider /> */}
+                <MenuItem onClick={signOut}>Sair </MenuItem>
               </MenuGroup>
             </MenuList>
           </Menu>
