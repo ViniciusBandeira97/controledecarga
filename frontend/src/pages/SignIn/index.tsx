@@ -21,7 +21,7 @@ type SignInFormData = {
 
 const signInFormSchema = Yup.object().shape({
   cpf: Yup.string().required("CPF obrigatório"),
-  password: Yup.string().required("Senha obrigatório"),
+  senha: Yup.string().required("Senha obrigatório"),
 });
 
 export default function SignIn() {
@@ -94,11 +94,11 @@ export default function SignIn() {
               placeholder="Senha"
               isPassword
               error={
-                errors?.password?.message
-                  ? String(errors?.password?.message)
+                errors?.senha?.message
+                  ? String(errors?.senha?.message)
                   : undefined
               }
-              {...register("password")}
+              {...register("senha")}
             />
           </Stack>
 

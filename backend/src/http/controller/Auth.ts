@@ -23,6 +23,7 @@ export class AuthController {
         cpf: true,
         nome: true,
         sobrenome: true,
+        tipo: true,
       },
       where: {
         cpf: body.data.cpf,
@@ -40,16 +41,8 @@ export class AuthController {
       expiresIn: '12h',
     })
     return res.send({
-      data: {
-        id: findUser.id,
-        matricula: findUser.matricula,
-        cpf: findUser.cpf,
-        nome: findUser.nome,
-        sobrenome: findUser.sobrenome,
-      },
-      token: {
-        access_token: accessToken,
-      },
+      user: findUser,
+      token: accessToken,
     })
   }
 }

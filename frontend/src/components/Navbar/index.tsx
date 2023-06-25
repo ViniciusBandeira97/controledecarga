@@ -24,6 +24,8 @@ interface NavbarProps {
 export function Navbar({ children }: NavbarProps) {
   const { signOut } = useAuth();
 
+  const {user} = useAuth()
+
   return (
     <Flex>
       <Flex
@@ -68,9 +70,9 @@ export function Navbar({ children }: NavbarProps) {
           <Menu>
             <MenuButton>
               <Flex align={"center"}>
-                <Avatar size="lg" name={"Fulano"} bg="#ee3239" />
+                <Avatar size="lg" name={user?.nome} bg="#ee3239" />
                 <Text fontSize="2xl" fontWeight="bold" ml="2">
-                  {"Fulano"}
+                  {user?.nome}
                 </Text>
               </Flex>
             </MenuButton>

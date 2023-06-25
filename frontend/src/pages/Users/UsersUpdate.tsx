@@ -1,8 +1,13 @@
 import { Box } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
 import { UserCreateAndUpdate } from "../../components/UserCreateAndUpdate";
+import { useUserOne } from "../../hook/queries/useUsers";
 
 
 export default function UsersCreate() {
+  const { userId } = useParams();
+
+  const {data} =useUserOne({userId})
   
   return (
     <Box  
@@ -13,7 +18,7 @@ export default function UsersCreate() {
       overflowY= 'scroll'
       pb='10rem'
     >
-      <UserCreateAndUpdate type="update" />
+      <UserCreateAndUpdate type="update" user={data} />
     </Box>
 );
 }

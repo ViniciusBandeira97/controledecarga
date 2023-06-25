@@ -2,17 +2,6 @@ import { env } from '@/env'
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify'
 import { verify } from 'jsonwebtoken'
 
-interface ITokenPayload {
-  accessUser: {
-    id: string
-    is_manager: boolean
-    is_supervisor: boolean
-  }
-
-  iat: number
-  exp: number
-}
-
 export function isAuth(
   req: FastifyRequest,
   res: FastifyReply,
@@ -31,9 +20,14 @@ export function isAuth(
     return res.status(401).send({ error: 'Token error' })
 
   try {
-    const payload = verify(token, env.AUTH_TOKEN) as ITokenPayload
+    const payload = verify(token, env.AUTH_TOKEN) as {
+      id: string
+      iat: number
+      exp: number
+    }
+
     req.user = {
-      id: payload.accessUser.id,
+      id: payload.id,
     }
   } catch (error) {
     return res.status(401).send({ error: 'Token invalid' })

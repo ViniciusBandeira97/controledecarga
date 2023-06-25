@@ -3,12 +3,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Input } from "../../components/Form/Input";
 import { Select } from "../../components/Form/Select";
+import { User } from "../../hook/queries/useUsers";
+import { useAuth } from "../../hook/useAuth";
+import api from "../../service/api";
 
-type SignInFormData = {
+type UserFormData = {
   matricula: string
   cpf: string
   nome: string
@@ -24,52 +27,107 @@ type SignInFormData = {
   senha: string
 };
 
-const signInFormSchema = Yup.object().shape({
-  cpf: Yup.string().required("CPF obrigatório"),
-  matricula: Yup.string().required("Matricula obrigatório"),
-  nome: Yup.string().required("Nome obrigatório"),
-  sobrenome: Yup.string().required("Sobrenome obrigatório"),
-  genero: Yup.string().required("Gênero obrigatório"),
-  dataNascimento: Yup.string().required("DataNascimento obrigatório"),
-  telefone: Yup.string().required("Telefone obrigatório"),
-  endereco: Yup.string().required("Endereço obrigatório"),
-  estado: Yup.string().required("Estado obrigatório"),
-  cidade: Yup.string().required("Cidade obrigatório"),
-  cep: Yup.string().required("Cep obrigatório"),
-  tipo: Yup.string().required("Tipo obrigatório"),
-  senha: Yup.string().required("Senha obrigatório"),
-});
+
 
 interface UserCreateAndUpdateProps {
   type: 'update'|'create'
+  user?:User
 }
 
-export function UserCreateAndUpdate({type}: UserCreateAndUpdateProps) {
+export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
+  const navigate = useNavigate()
+
+  const userFormSchema = Yup.object().shape({
+    cpf: Yup.string().required("CPF obrigatório"),
+    matricula: Yup.string().required("Matricula obrigatório"),
+    nome: Yup.string().required("Nome obrigatório"),
+    sobrenome: Yup.string().required("Sobrenome obrigatório"),
+    genero: Yup.string().required("Gênero obrigatório"),
+    dataNascimento: Yup.string().required("DataNascimento obrigatório"),
+    telefone: Yup.string().required("Telefone obrigatório"),
+    endereco: Yup.string().required("Endereço obrigatório"),
+    estado: Yup.string().required("Estado obrigatório"),
+    cidade: Yup.string().required("Cidade obrigatório"),
+    cep: Yup.string().required("Cep obrigatório"),
+    tipo: Yup.string().required("Tipo obrigatório"),
+    senha: type === 'create'?Yup.string().required("Senha obrigatório"): Yup.string(),
+  });
 
   const toast = useToast();
   const { register, handleSubmit, formState, setValue } = useForm({
-    resolver: yupResolver(signInFormSchema),
+    resolver: yupResolver(userFormSchema),
   });
   const { errors } = formState;
 
-  const HandleSignIn: SubmitHandler<SignInFormData> = async (data) => {
-    
+  const {user: userAuth} = useAuth()
+
+  const createUser = async (data:UserFormData)  => {
+    await api.post('/users', {...data, dataNascimento: new Date(data.dataNascimento)})
+
     toast({
-      title: 'submit',
-      status: 'error',
+      title: 'Usuário criado com sucesso!',
+      status: 'success',
+      position: "top",
+      isClosable: true,
+    });
+    
+  };
+  
+  const updateUser = async (data:UserFormData) => {
+    
+    await api.put(`/users/${user?.id}`, {...data, dataNascimento: new Date(data.dataNascimento)})
+
+    toast({
+      title: 'Usuário alterado com sucesso!',
+      status: 'success',
       position: "top",
       isClosable: true,
     });
   };
 
-  useEffect(()=>{
-    if(type ==='update'){
-      console.log('editar');
-      setValue('nome', 'Fulano')
-      setValue('tipo', 'administrador')
-      
+  const HandleCreateOrUpdate: SubmitHandler<UserFormData> = async (data) => {
+    try {   
+      if(type==='create'){
+        await createUser(data)
+      }else {
+        await updateUser(data)
+      }
+
+      navigate('/users')
+    } catch (error) {
+      toast({
+        title: 'Desculpe, ocorreu um erro interno, Tente novamente mais tarde',
+        status: 'error',
+        position: "top",
+        isClosable: true,
+      });
     }
-  }, [type])
+  };
+
+  useEffect(()=>{
+    if(type ==='update' && user){    
+
+      
+      const dataNascimento = new Date(user.dataNascimento);
+
+      const day = ("00" + Number(dataNascimento.getDate() + 1)).slice(-2)
+      const month = ("00" + Number(dataNascimento.getMonth() + 1)).slice(-2)
+      const year = dataNascimento.getFullYear()
+      
+      setValue('cpf', user.cpf)
+      setValue('matricula', user.matricula)
+      setValue('nome', user.nome)
+      setValue('sobrenome', user.sobrenome)
+      setValue('genero', user.genero)
+      setValue('dataNascimento', `${year}-${month}-${day}`)
+      setValue('telefone', user.telefone)
+      setValue('endereco', user.endereco)
+      setValue('estado', user.estado)
+      setValue('cidade', user.cidade)
+      setValue('cep', user.cep)
+      setValue('tipo', user.tipo)
+    }
+  }, [type, user])
 
   return(
     <>
@@ -101,7 +159,7 @@ export function UserCreateAndUpdate({type}: UserCreateAndUpdateProps) {
         p='2rem'
         borderRadius={8}
         flexDir="column"
-        onSubmit={handleSubmit(HandleSignIn as any)}
+        onSubmit={handleSubmit(userAuth?.tipo === 'administrador' ?HandleCreateOrUpdate as any: () => null)}
       >
         <Text as='h3' fontSize='lg' fontWeight='light' mb='1rem'>
           Dados pessoais
@@ -124,13 +182,19 @@ export function UserCreateAndUpdate({type}: UserCreateAndUpdateProps) {
           />
         </Flex>
         <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem'>
-          <Input
-            label="Gênero"
-            error={
-              errors?.genero?.message ? String(errors?.genero?.message) : undefined
-            }
-            {...register("genero")}
-          />
+           <Select 
+              label="Gênero"
+              error={
+                errors?.genero?.message
+                  ? String(errors?.genero?.message)
+                  : undefined
+              }
+              {...register("genero")}
+            >
+              <option value='masculino'>Masculino</option>
+              <option value='feminino'>Feminino</option>
+              <option value='outro'>Outro</option>
+            </Select>
           <Input
             label="Data Nascimento"
             type="date"
@@ -197,8 +261,18 @@ export function UserCreateAndUpdate({type}: UserCreateAndUpdateProps) {
         <Text as='h3' fontSize='lg' fontWeight='light' my='1rem'>
           Dados acesso
         </Text>
-        
+
         <Flex flexDir={['column', 'row']} gap="2rem" >
+          <Input
+              label="Matricula"
+              error={
+                errors?.matricula?.message ? String(errors?.matricula?.message) : undefined
+              }
+              {...register("matricula")}
+            />
+        </Flex>
+        
+        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem' >
           <Input
               label="Senha"
               isPassword
@@ -224,16 +298,21 @@ export function UserCreateAndUpdate({type}: UserCreateAndUpdateProps) {
             </Select>
           </Flex>
 
+        {
+          userAuth?.tipo === 'administrador' && (
+            <Button
+              type="submit"
+              mt="3rem"
+              colorScheme="red"
+              size="lg"
+              isLoading={formState.isSubmitting}
+            >
+              {type ==='update' ?'ALTERAR':'CADASTRAR'}
+            </Button>
+          )
+        }
 
-        <Button
-          type="submit"
-          mt="3rem"
-          colorScheme="red"
-          size="lg"
-          isLoading={formState.isSubmitting}
-        >
-          {type ==='update' ?'ALTERAR':'CADASTRAR'}
-        </Button>
+    
       </Flex>
   
     </>

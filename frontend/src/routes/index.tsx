@@ -51,7 +51,7 @@ export function Router() {
               <UsersUpdate />
             </IsPrive>
           }
-          path="/users/:id"
+          path="/users/:userId"
         />
         <Route element={<ErrorPage />} path="*" />
       </Routes>

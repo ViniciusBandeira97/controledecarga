@@ -11,10 +11,10 @@ type IndexBody = {
 
 export class UserController {
   async index(req: FastifyRequest, res: FastifyReply) {
-    const body = req.body as IndexBody
+    const body = req.query as IndexBody
 
-    const pagesize = body?.pagesize ?? 10
-    const page = body?.page ?? 0
+    const pagesize = body?.pagesize ? Number(body?.pagesize) : 10
+    const page = body?.page ? Number(body?.page) : 0
 
     const users = await prisma.usuario.findMany({
       take: pagesize,
@@ -38,7 +38,7 @@ export class UserController {
     const usersTotal = await prisma.usuario.count()
 
     return res.send({
-      data: users,
+      users,
       page,
       pagesize,
       total: usersTotal,

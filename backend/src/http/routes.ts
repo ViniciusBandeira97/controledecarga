@@ -11,7 +11,6 @@ export async function appRoutesPublic(app: FastifyInstance) {
 }
 export async function appRoutesPrivate(app: FastifyInstance) {
   app
-
     .addHook('onRequest', isAuth)
     .post('/users', userController.create)
     .get('/users', userController.index)

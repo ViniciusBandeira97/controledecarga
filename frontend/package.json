@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=4000" ,
+    "dev": "vite --port=4000",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -14,6 +14,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.1.1",
+    "axios": "^1.4.0",
     "framer-motion": "^10.12.16",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
@@ -22,7 +23,9 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.44.3",
     "react-icons": "^4.9.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.12.1",
+    "remask": "^1.2.2",
     "sass": "^1.63.2",
     "sort-by": "^1.2.0",
     "yup": "^1.2.0"
