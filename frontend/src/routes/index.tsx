@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { IsPrive } from "../components/IsPrive";
 import { IsPublic } from "../components/IsPublic";
 import Dashboard from "../pages/Dashboard";
+import DeliversList from "../pages/Delivers/DeliversList";
+import DeliversUpdate from "../pages/Delivers/DeliversUpdate";
 import ErrorPage from "../pages/ErrorPage";
 import SignIn from "../pages/SignIn";
 import UsersCreate from "../pages/Users/UsersCreate";
@@ -52,6 +54,22 @@ export function Router() {
             </IsPrive>
           }
           path="/users/:userId"
+        />
+        <Route
+          element={
+            <IsPrive>
+              <DeliversList />
+            </IsPrive>
+          }
+          path="/delivers"
+        />
+        <Route
+          element={
+            <IsPrive>
+              <DeliversUpdate />
+            </IsPrive>
+          }
+          path="/delivers/:cod"
         />
         <Route element={<ErrorPage />} path="*" />
       </Routes>

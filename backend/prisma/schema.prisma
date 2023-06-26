@@ -34,18 +34,17 @@ model Usuario {
 }
 
 model Entrega {
-  protolo        Int      @id @default(autoincrement())
-  localColeta    String
-  material       String
-  peso           Float
-  localDescarga  String
-  horarioColeta  DateTime
-  horarioEntrega DateTime
-  usuario        String
+  codigo         Int       @id @default(autoincrement())
+  localColeta    String?
+  material       String?
+  peso           Float?
+  localDescarga  String?
+  horarioColeta  DateTime  @default(now())
+  horarioEntrega DateTime?
 
   dataCricao     DateTime @default(now())
   dataAtualiacao DateTime @updatedAt
 
-  Usuario          Usuario @relation(fields: [usuarioMatricula], references: [matricula])
-  usuarioMatricula String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId String
 }

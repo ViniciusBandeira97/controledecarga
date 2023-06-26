@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Flex,
   Table,
   TableContainer,
@@ -12,10 +11,9 @@ import {
   Tr
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { MdAddCircle } from 'react-icons/md';
-import { Link, useNavigate, } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Pagination } from "../../components/Pagination";
-import { useUsers } from "../../hook/queries/useUsers";
+import { useDelivers } from "../../hook/queries/useDelivers";
 import { useAuth } from "../../hook/useAuth";
 
 export default function UsersList() {
@@ -23,7 +21,7 @@ export default function UsersList() {
 
   const [page, setPage]=useState(1)
 
-  const {data} = useUsers({
+  const {data} = useDelivers({
     page: page,
     pagesize: 10
   })
@@ -34,59 +32,46 @@ export default function UsersList() {
     <Box overflow="hidden" p='2rem'>
       <Flex align='center' mb='2rem'>
         <Text as='h1' fontSize='2xl' fontWeight='bold' >
-          Lista de Usuários
+         Histórico de Entregas
         </Text>
-
-        {
-          user?.tipo === 'administrador' && (
-            <Link to='/users/create'>
-              <Button 
-                as='div'
-                leftIcon={<MdAddCircle />} 
-                colorScheme='blue' 
-                variant='solid'
-                ml='4'
-                size='sm'
-              >
-                Criar
-              </Button>
-            </Link>
-          )
-        }
       </Flex>
 
       {
-        data?.users && data?.users.length > 0 && (
+        data?.delivers && data?.delivers.length > 0 && (
           <>
           <TableContainer mb='2rem  '>
               <Table variant='simple' bg='white' borderRadius='6' colorScheme='blackAlpha'>
             
             <Thead>
               <Tr>
-                <Th>Matricula</Th>
-                <Th>Usuário</Th>
-                <Th>Tipo</Th>
-                <Th>Telefone</Th>
+                <Th>Código</Th>
+                {user?.tipo !== 'motorista' && <Th>Motorista</Th>}
+                <Th>Material</Th>
+                <Th>Peso (KG)</Th>
+                <Th>Local Coleta</Th>
+                <Th>Horário Coleta</Th>
+                <Th>Local Descarga</Th>
+                <Th>Horário Descarga</Th>
+                <Th>Tempo Entrega</Th>
+             
               </Tr>
             </Thead>
             <Tbody>
               {
-                data?.users?.map(user => (
+                data?.delivers?.map(delivery => (
                   <Tr          
-                    key={user.id}
-                    _hover={{
-                        cursor:'pointer',
-                          bg: "gray.50",
-                            }}
-                    transition=" all 0.3s"
-                    onClick={()=>{
-                      navigate(`/users/${user.id}`)
-                    }}
+                    key={delivery.codigo}
+             
                 >
-                  <Td>{user.matricula}</Td>
-                  <Td>{user.nome}</Td>
-                  <Td >{user.tipo}</Td>
-                  <Td >{user.telefone}</Td>
+                  <Td>{delivery.codigo || '-'}</Td>
+                  {user?.tipo !== 'motorista' && <Td>{`${delivery.usuario.nome} ${delivery.usuario.sobrenome}` || '-'}</Td>}
+                  <Td>{delivery.material || '-'}</Td>
+                  <Td >{delivery.peso || '-'}</Td>
+                  <Td >{delivery.localColeta || '-'}</Td>
+                  <Td >{delivery?.horarioColetaToString || '-'}</Td>
+                  <Td >{delivery.localDescarga || '-'}</Td>
+                  <Td >{delivery?.horarioEntregaToString || '-'}</Td>
+                  <Td >{delivery?.diffTimesToString || '-'}</Td>
                 </Tr>
                 ))
               }
@@ -102,7 +87,7 @@ export default function UsersList() {
         ) 
       }
       {
-        !data?.users||  data?.users.length < 1 && 
+        !data?.delivers||  data?.delivers.length < 1 && 
           <Text textAlign='center' fontSize='lg' fontWeight='light'>
             Sem dados a serem mostrados.
           </Text>

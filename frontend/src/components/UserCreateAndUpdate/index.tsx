@@ -43,7 +43,7 @@ export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
     nome: Yup.string().required("Nome obrigatório"),
     sobrenome: Yup.string().required("Sobrenome obrigatório"),
     genero: Yup.string().required("Gênero obrigatório"),
-    dataNascimento: Yup.string().required("DataNascimento obrigatório"),
+    dataNascimento: Yup.string().required("Data Nascimento obrigatório"),
     telefone: Yup.string().required("Telefone obrigatório"),
     endereco: Yup.string().required("Endereço obrigatório"),
     estado: Yup.string().required("Estado obrigatório"),

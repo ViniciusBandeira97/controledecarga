@@ -13,7 +13,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import { FaHome, FaTruck, FaUserFriends } from "react-icons/fa";
+import { FaClipboardList, FaHome, FaUserFriends } from "react-icons/fa";
 import { useAuth } from "../../hook/useAuth";
 import { NavLink } from "./NavLink";
 
@@ -46,15 +46,33 @@ export function Navbar({ children }: NavbarProps) {
         </HStack>
 
         <VStack mt="4rem" w="full" align="start">
-          <NavLink href="/dashboard" icon={FaHome}>
-            Inicio
-          </NavLink>
-          <NavLink href="/users" icon={FaUserFriends}>
-            Usuários
-          </NavLink>
-          <NavLink href="/delivers" icon={FaTruck}>
-            Transportes
-          </NavLink>
+          {
+            user?.tipo === 'motorista' 
+            ? (
+              <>
+                 <NavLink href="/dashboard" icon={FaHome}>
+                    Inicio
+                  </NavLink>
+                  <NavLink href="/delivers" icon={FaClipboardList}>
+                    Histórico
+                  </NavLink>
+              </>
+            )
+            :(
+              <>
+               <NavLink href="/dashboard" icon={FaHome}>
+                  Inicio
+                </NavLink>
+                <NavLink href="/users" icon={FaUserFriends}>
+                  Usuários
+                </NavLink>
+                <NavLink href="/delivers" icon={FaClipboardList}>
+                  Histórico
+                </NavLink>
+              </>
+            )
+          }
+
         </VStack>
       </Flex>
       <Flex flexDir="column" flex={1}>
@@ -70,9 +88,9 @@ export function Navbar({ children }: NavbarProps) {
           <Menu>
             <MenuButton>
               <Flex align={"center"}>
-                <Avatar size="lg" name={user?.nome} bg="#ee3239" />
+                <Avatar size="lg" name={`${user?.nome} ${user?.sobrenome}`} bg="#ee3239" />
                 <Text fontSize="2xl" fontWeight="bold" ml="2">
-                  {user?.nome}
+                  {`${user?.nome} ${user?.sobrenome}`}
                 </Text>
               </Flex>
             </MenuButton>

@@ -11,7 +11,7 @@ export default function UsersCreate() {
   
   return (
     <Box  
-      p='4' 
+      p='2rem'
       overflow='auto' 
       h='100%'
       maxH= '100vh'    
