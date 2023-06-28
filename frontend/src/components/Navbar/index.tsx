@@ -8,6 +8,8 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  Grid,
+  GridItem,
   HStack,
   Icon,
   Image,
@@ -69,74 +71,96 @@ export function Navbar({ children }: NavbarProps) {
 
   return (
     <>
-      <Flex>
-        <Flex
-          height="100vh"
-          w="23rem"
-          bg="#11111d"
-          display={["none", "none", "none", "flex"]}
-          flexDir="column"
-          align="center"
-          py="6"
-          px="3rem"
-        >
-          <HStack w="full">
-            <Image w="4rem" objectFit="contain" src="/public/logo.svg" />
-            <Text color="white" fontWeight="bold" fontSize="2xl">
-              PH Transporte
-            </Text>
-          </HStack>
-
-          <Options />
-
-          <Box mt="auto">
-            <Text color="white" fontWeight="light" fontSize="2xl">
-              {dateNow}
-            </Text>
-          </Box>
-        </Flex>
-        <Flex flexDir="column" flex={1}>
+      <Grid
+        templateAreas={[
+          `"HEADER"
+          "MAIN"`,
+          `"HEADER"
+          "MAIN"`,
+          `"HEADER"
+          "MAIN"`,
+          `"NAV HEADER"
+          "NAV MAIN"`,
+        ]}
+        gridTemplateRows={"5rem 1fr "}
+        gridTemplateColumns={["1fr", "1fr", "1fr", "20rem 1fr"]}
+        h="100vh"
+      >
+        <GridItem area={"NAV"}>
           <Flex
-            width={"full"}
-            height="5rem"
-            bg="white"
-            justify="space-between"
-            pr="4rem"
-            pl="0.5rem"
-            boxShadow="xl"
+            bg="#11111d"
+            flex="1"
+            display={["none", "none", "none", "flex"]}
+            flexDir="column"
             align="center"
+            py="6"
+            px="3rem"
+            h="full"
           >
-            <Box>
-              <Button
-                colorScheme="blackAlpha"
-                fontSize="6xl"
-                onClick={onOpen}
-                variant="ghost"
-                py="2rem"
-                display={["flex", "flex", "flex", "none"]}
-              >
-                <Icon as={IoMenu} />
-              </Button>
+            <HStack w="full">
+              <Image w="4rem" objectFit="contain" src="/public/logo.svg" />
+              <Text color="white" fontWeight="bold" fontSize="2xl">
+                PH Transporte
+              </Text>
+            </HStack>
+
+            <Options />
+
+            <Box mt="auto">
+              <Text color="white" fontWeight="light" fontSize="2xl">
+                {dateNow}
+              </Text>
             </Box>
-            <Menu>
-              <MenuButton>
-                <Flex align={"center"}>
-                  <Avatar size="lg" bg="#11111d" color="white" />
-                  <Text fontSize="2xl" fontWeight="bold" ml="2">
-                    {`${user?.nome} ${user?.sobrenome}`}
-                  </Text>
-                </Flex>
-              </MenuButton>
-              <MenuList zIndex="1000">
-                <MenuGroup>
-                  <MenuItem onClick={signOut}>Sair </MenuItem>
-                </MenuGroup>
-              </MenuList>
-            </Menu>
           </Flex>
-          <Box maxW="100vw">{children}</Box>
-        </Flex>
-      </Flex>
+        </GridItem>
+
+        <GridItem area={"HEADER"}>
+          <Flex flexDir="column" flex={1}>
+            <Flex
+              width={"full"}
+              height="5rem"
+              bg="white"
+              justify="space-between"
+              pr="4rem"
+              pl="0.5rem"
+              boxShadow="xl"
+              align="center"
+            >
+              <Box>
+                <Button
+                  colorScheme="blackAlpha"
+                  fontSize="6xl"
+                  onClick={onOpen}
+                  variant="ghost"
+                  py="2rem"
+                  display={["flex", "flex", "flex", "none"]}
+                >
+                  <Icon as={IoMenu} />
+                </Button>
+              </Box>
+              <Menu>
+                <MenuButton>
+                  <Flex align={"center"}>
+                    <Avatar size="lg" bg="#11111d" color="white" />
+                    <Text fontSize="2xl" fontWeight="bold" ml="2">
+                      {`${user?.nome} ${user?.sobrenome}`}
+                    </Text>
+                  </Flex>
+                </MenuButton>
+                <MenuList zIndex="1000">
+                  <MenuGroup>
+                    <MenuItem onClick={signOut}>Sair </MenuItem>
+                  </MenuGroup>
+                </MenuList>
+              </Menu>
+            </Flex>
+          </Flex>
+        </GridItem>
+
+        <GridItem area={"MAIN"} maxW="full" overflow={"auto"}>
+          {children}
+        </GridItem>
+      </Grid>
 
       <Drawer placement={"left"} size="sm" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />

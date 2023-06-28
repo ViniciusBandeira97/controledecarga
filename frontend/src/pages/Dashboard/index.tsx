@@ -37,7 +37,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Box overflow="auto" p="2rem" maxH="100vh" pb="10rem">
+    <Box overflow="auto" p="2rem" maxH="100vh" pb="10rem" flex="1">
       <Flex
         justify="space-between"
         flexDir={["column", "column", "column", "row"]}
@@ -58,7 +58,7 @@ export default function Dashboard() {
       <Flex
         gap="1rem"
         mt="1rem"
-        flexDir={["column", "column", "column", "row"]}
+        flexDir={["column", "column", "column", "column", "row"]}
       >
         <Flex
           bg="white"
@@ -112,7 +112,7 @@ export default function Dashboard() {
           <Flex
             gap="1rem"
             mt="1rem"
-            flexDir={["column", "column", "column", "row"]}
+            flexDir={["column", "column", "column", "column", "row"]}
           >
             <Box
               bg="white"
@@ -189,7 +189,10 @@ export default function Dashboard() {
       )}
 
       {user?.tipo === "motorista" && (
-        <Stack direction={["column", "column", "column", "row"]} mt="2rem">
+        <Stack
+          direction={["column", "column", "column", "column", "row"]}
+          mt="2rem"
+        >
           <Button
             onClick={handleCreateDelivery}
             leftIcon={<Icon as={FaTruck} mr="1rem" />}
