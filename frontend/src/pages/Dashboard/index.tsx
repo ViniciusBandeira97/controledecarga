@@ -37,7 +37,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Box p="2rem" maxH="100vh" pb="10rem" flex="1">
+    <Box p="2rem" pb="6rem">
       <Flex
         justify="space-between"
         flexDir={["column", "column", "column", "row"]}
