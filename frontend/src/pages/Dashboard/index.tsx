@@ -11,6 +11,7 @@ import Chart from "react-apexcharts";
 import { FaClipboardList, FaTruck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Delivery } from "../../hook/queries/useDelivers";
+import { useDeliveryAnalytic } from "../../hook/queries/useDeliveryAnalytic";
 import { useAuth } from "../../hook/useAuth";
 import api from "../../service/api";
 
@@ -18,6 +19,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const toast = useToast();
   const { user } = useAuth();
+
+  const { data } = useDeliveryAnalytic();
 
   async function handleCreateDelivery() {
     try {
@@ -39,10 +42,15 @@ export default function Dashboard() {
         justify="space-between"
         flexDir={["column", "column", "column", "row"]}
       >
-        <Text fontSize="4xl" fontWeight="bold">
+        <Text fontSize={["3xl", "3xl", "3xl", "4xl"]} fontWeight="bold">
           Olá,{` ${user?.nome} ${user?.sobrenome}`}
         </Text>
-        <Text fontSize="4xl" fontWeight="bold">
+        <Text
+          fontSize={["3xl", "3xl", "3xl", "4xl"]}
+          fontWeight="bold"
+          mt={["1rem", "1rem", "1rem", 0]}
+          mb="3rem"
+        >
           Matricula: {user?.matricula}
         </Text>
       </Flex>
@@ -55,7 +63,6 @@ export default function Dashboard() {
         <Flex
           bg="white"
           borderRadius="8px"
-          minW="465px"
           w="full"
           p="1rem"
           boxShadow="lg"
@@ -65,13 +72,12 @@ export default function Dashboard() {
             Primeira Entrega do Dia
           </Text>
           <Text as="span" fontWeight="light" fontSize="2xl">
-            07:38
+            {data?.timeFirstDeliveryToday}
           </Text>
         </Flex>
         <Flex
           bg="white"
           borderRadius="8px"
-          minW="465px"
           w="full"
           p="1rem"
           boxShadow="lg"
@@ -81,13 +87,12 @@ export default function Dashboard() {
             Total de Entregas do Dia
           </Text>
           <Text as="span" fontWeight="light" fontSize="2xl">
-            50
+            {data?.totalToday}
           </Text>
         </Flex>
         <Flex
           bg="white"
           borderRadius="8px"
-          minW="465px"
           w="full"
           p="1rem"
           boxShadow="lg"
@@ -97,7 +102,7 @@ export default function Dashboard() {
             Total Entregas
           </Text>
           <Text as="span" fontWeight="light" fontSize="2xl">
-            230
+            {data?.total}
           </Text>
         </Flex>
       </Flex>
@@ -125,10 +130,11 @@ export default function Dashboard() {
                 type="donut"
                 height={260}
                 width="100%"
-                series={[10, 20, 3]}
+                series={data?.materials.map((driver) => driver.quantity) ?? []}
                 options={{
-                  series: [10, 20, 3],
-                  labels: ["Madeira", "Escoria", "Ferro"],
+                  series:
+                    data?.materials.map((driver) => driver.quantity) ?? [],
+                  labels: data?.materials.map((driver) => driver.name) ?? [],
                 }}
               />
             </Box>
@@ -167,13 +173,13 @@ export default function Dashboard() {
                   },
 
                   xaxis: {
-                    categories: ["Felipe", "Joao", "Matheus"],
+                    categories: data?.drivers.map((driver) => driver.name),
                   },
                 }}
                 series={[
                   {
                     name: "Qtd",
-                    data: [10, 20, 30],
+                    data: data?.drivers.map((driver) => driver.quantity) ?? [],
                   },
                 ]}
               />

@@ -8,6 +8,20 @@ type IndexBody = {
   search?: string
 }
 
+type ItemAnalytic = {
+  name: string
+  quantity: number
+}
+
+type AnalyticResponse = {
+  totalToday: number
+  total: number
+  timeFirstDeliveryToday: string
+
+  drivers: ItemAnalytic[]
+  materials: ItemAnalytic[]
+}
+
 export class DeliveryController {
   async index(req: FastifyRequest, res: FastifyReply) {
     const body = req.query as IndexBody
@@ -158,5 +172,103 @@ export class DeliveryController {
     }
 
     return res.status(200).send(delivery)
+  }
+
+  async analytic(
+    req: FastifyRequest,
+    res: FastifyReply,
+  ): Promise<AnalyticResponse> {
+    const user = await prisma.usuario.findUnique({
+      where: {
+        id: req.user.id,
+      },
+      select: {
+        id: true,
+        tipo: true,
+      },
+    })
+
+    const now = new Date()
+    const filterCreatedToday = {
+      gte: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0),
+      lte: new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59,
+      ),
+    }
+
+    const firstDeliveryToday = await prisma.entrega.findFirst({
+      select: { dataCricao: true },
+      where: {
+        dataCricao: filterCreatedToday,
+        usuarioId: user?.tipo === 'motorista' ? user.id : undefined,
+      },
+    })
+    const deliversTotalToday = await prisma.entrega.count({
+      where: {
+        dataCricao: filterCreatedToday,
+        usuarioId: user?.tipo === 'motorista' ? user.id : undefined,
+      },
+    })
+    const deliversTotal = await prisma.entrega.count({
+      where: {
+        usuarioId: user?.tipo === 'motorista' ? user.id : undefined,
+      },
+    })
+
+    const response: AnalyticResponse = {
+      totalToday: deliversTotalToday ?? 0,
+      total: deliversTotal ?? 0,
+      timeFirstDeliveryToday:
+        firstDeliveryToday?.dataCricao.toLocaleString('pt-br', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }) ?? '-',
+      drivers: [],
+      materials: [],
+    }
+
+    if (user?.tipo !== 'motorista') {
+      const materialsGroup = await prisma.entrega.groupBy({
+        by: ['material'],
+        _count: {
+          material: true,
+        },
+      })
+      if (materialsGroup) {
+        for (const material of materialsGroup) {
+          response.materials.push({
+            name: String(material.material),
+            quantity: material._count.material,
+          })
+        }
+      }
+
+      const driversGroup = await prisma.entrega.groupBy({
+        by: ['usuarioId'],
+        _count: {
+          usuarioId: true,
+        },
+      })
+      if (driversGroup) {
+        for (const driver of driversGroup) {
+          const user = await prisma.usuario.findUnique({
+            select: { nome: true, sobrenome: true },
+            where: { id: driver.usuarioId },
+          })
+
+          response.drivers.push({
+            name: `${user?.nome} ${user?.sobrenome}`,
+            quantity: driver._count.usuarioId,
+          })
+        }
+      }
+    }
+
+    return response
   }
 }

@@ -22,5 +22,6 @@ export async function appRoutesPrivate(app: FastifyInstance) {
     .post('/delivers', deliveryController.create)
     .get('/delivers', deliveryController.index)
     .get('/delivers/:codigo', deliveryController.show)
+    .get('/delivers/analytic', deliveryController.analytic)
     .put('/delivers/:codigo', deliveryController.update)
 }

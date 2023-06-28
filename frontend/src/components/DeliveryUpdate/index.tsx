@@ -103,7 +103,7 @@ export function DeliveryUpdate({ delivery }: DeliveryUpdateProps) {
                 as="span"
                 bg="gray.100"
                 fontWeight="bold"
-                fontSize="7xl"
+                fontSize={["2xl", "2xl", "2xl", "2xl"]}
                 borderRadius="4px"
                 px="1.8rem"
                 py="0.8rem"
@@ -119,7 +119,7 @@ export function DeliveryUpdate({ delivery }: DeliveryUpdateProps) {
                 as="span"
                 bg="gray.100"
                 fontWeight="bold"
-                fontSize="7xl"
+                fontSize={["2xl", "2xl", "2xl", "2xl"]}
                 borderRadius="4px"
                 px="1.8rem"
                 py="0.8rem"
@@ -135,7 +135,7 @@ export function DeliveryUpdate({ delivery }: DeliveryUpdateProps) {
                 as="span"
                 bg="gray.100"
                 fontWeight="bold"
-                fontSize="7xl"
+                fontSize={["2xl", "2xl", "2xl", "2xl"]}
                 borderRadius="4px"
                 px="1.8rem"
                 py="0.8rem"
