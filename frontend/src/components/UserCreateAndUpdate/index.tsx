@@ -12,30 +12,28 @@ import { useAuth } from "../../hook/useAuth";
 import api from "../../service/api";
 
 type UserFormData = {
-  matricula: string
-  cpf: string
-  nome: string
-  sobrenome: string
-  genero: string
-  dataNascimento: Date
-  telefone: string
-  endereco: string
-  estado: string
-  cidade: string
-  cep: string
-  tipo: string
-  senha: string
+  matricula: string;
+  cpf: string;
+  nome: string;
+  sobrenome: string;
+  genero: string;
+  dataNascimento: Date;
+  telefone: string;
+  endereco: string;
+  estado: string;
+  cidade: string;
+  cep: string;
+  tipo: string;
+  senha: string;
 };
 
-
-
 interface UserCreateAndUpdateProps {
-  type: 'update'|'create'
-  user?:User
+  type: "update" | "create";
+  user?: User;
 }
 
-export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
-  const navigate = useNavigate()
+export function UserCreateAndUpdate({ type, user }: UserCreateAndUpdateProps) {
+  const navigate = useNavigate();
 
   const userFormSchema = Yup.object().shape({
     cpf: Yup.string().required("CPF obrigatório"),
@@ -50,7 +48,10 @@ export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
     cidade: Yup.string().required("Cidade obrigatório"),
     cep: Yup.string().required("Cep obrigatório"),
     tipo: Yup.string().required("Tipo obrigatório"),
-    senha: type === 'create'?Yup.string().required("Senha obrigatório"): Yup.string(),
+    senha:
+      type === "create"
+        ? Yup.string().required("Senha obrigatório")
+        : Yup.string(),
   });
 
   const toast = useToast();
@@ -59,194 +60,219 @@ export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
   });
   const { errors } = formState;
 
-  const {user: userAuth} = useAuth()
+  const { user: userAuth } = useAuth();
 
-  const createUser = async (data:UserFormData)  => {
-    await api.post('/users', {...data, dataNascimento: new Date(data.dataNascimento)})
+  const createUser = async (data: UserFormData) => {
+    await api.post("/users", {
+      ...data,
+      dataNascimento: new Date(data.dataNascimento),
+    });
 
     toast({
-      title: 'Usuário criado com sucesso!',
-      status: 'success',
+      title: "Usuário criado com sucesso!",
+      status: "success",
       position: "top",
       isClosable: true,
     });
-    
   };
-  
-  const updateUser = async (data:UserFormData) => {
-    
-    await api.put(`/users/${user?.id}`, {...data, dataNascimento: new Date(data.dataNascimento)})
+
+  const updateUser = async (data: UserFormData) => {
+    await api.put(`/users/${user?.id}`, {
+      ...data,
+      dataNascimento: new Date(data.dataNascimento),
+    });
 
     toast({
-      title: 'Usuário alterado com sucesso!',
-      status: 'success',
+      title: "Usuário alterado com sucesso!",
+      status: "success",
       position: "top",
       isClosable: true,
     });
   };
 
   const HandleCreateOrUpdate: SubmitHandler<UserFormData> = async (data) => {
-    try {   
-      if(type==='create'){
-        await createUser(data)
-      }else {
-        await updateUser(data)
+    try {
+      if (type === "create") {
+        await createUser(data);
+      } else {
+        await updateUser(data);
       }
 
-      navigate('/users')
+      navigate("/users");
     } catch (error) {
       toast({
-        title: 'Desculpe, ocorreu um erro interno, Tente novamente mais tarde',
-        status: 'error',
+        title: "Desculpe, ocorreu um erro interno, Tente novamente mais tarde",
+        status: "error",
         position: "top",
         isClosable: true,
       });
     }
   };
 
-  useEffect(()=>{
-    if(type ==='update' && user){    
-
-      
+  useEffect(() => {
+    if (type === "update" && user) {
       const dataNascimento = new Date(user.dataNascimento);
 
-      const day = ("00" + Number(dataNascimento.getDate() + 1)).slice(-2)
-      const month = ("00" + Number(dataNascimento.getMonth() + 1)).slice(-2)
-      const year = dataNascimento.getFullYear()
-      
-      setValue('cpf', user.cpf)
-      setValue('matricula', user.matricula)
-      setValue('nome', user.nome)
-      setValue('sobrenome', user.sobrenome)
-      setValue('genero', user.genero)
-      setValue('dataNascimento', `${year}-${month}-${day}`)
-      setValue('telefone', user.telefone)
-      setValue('endereco', user.endereco)
-      setValue('estado', user.estado)
-      setValue('cidade', user.cidade)
-      setValue('cep', user.cep)
-      setValue('tipo', user.tipo)
+      const day = ("00" + Number(dataNascimento.getDate() + 1)).slice(-2);
+      const month = ("00" + Number(dataNascimento.getMonth() + 1)).slice(-2);
+      const year = dataNascimento.getFullYear();
+
+      setValue("cpf", user.cpf);
+      setValue("matricula", user.matricula);
+      setValue("nome", user.nome);
+      setValue("sobrenome", user.sobrenome);
+      setValue("genero", user.genero);
+      setValue("dataNascimento", `${year}-${month}-${day}`);
+      setValue("telefone", user.telefone);
+      setValue("endereco", user.endereco);
+      setValue("estado", user.estado);
+      setValue("cidade", user.cidade);
+      setValue("cep", user.cep);
+      setValue("tipo", user.tipo);
     }
-  }, [type, user])
+  }, [type, user]);
 
-  return(
+  return (
     <>
-      <Flex  align='center' mb='2rem'>
+      <Flex align="center" mb="2rem">
+        <Link to={"/users"}>
+          <Button
+            as="div"
+            leftIcon={<MdKeyboardBackspace />}
+            colorScheme="blackAlpha"
+            variant="ghost"
+            color="black"
+            fontSize="3xl"
+            mr="2"
+          ></Button>
+        </Link>
 
-      <Link to={'/users'}>
-        <Button 
-          as='div'
-          leftIcon={<MdKeyboardBackspace />} 
-          colorScheme='blackAlpha' 
-          variant='ghost'
-          color='black'
-          fontSize='3xl'
-          mr='2'
-        >
-        </Button>
-      </Link>
-
-      <Text as='h1' fontSize='2xl' fontWeight='bold'>
-        {type==='create' ?'Criar':'Alterar'} Usuário
-      </Text>
+        <Text as="h1" fontSize="2xl" fontWeight="bold">
+          {type === "create" ? "Criar" : "Alterar"} Usuário
+        </Text>
       </Flex>
 
       <Flex
         as="form"
-        w='full'
+        w="full"
         maxW={1100}
         bg="white"
-        p='2rem'
+        p="2rem"
         borderRadius={8}
         flexDir="column"
-        onSubmit={handleSubmit(userAuth?.tipo === 'administrador' ?HandleCreateOrUpdate as any: () => null)}
+        onSubmit={handleSubmit(
+          userAuth?.tipo === "administrador"
+            ? (HandleCreateOrUpdate as any)
+            : () => null
+        )}
       >
-        <Text as='h3' fontSize='lg' fontWeight='light' mb='1rem'>
+        <Text as="h3" fontSize="lg" fontWeight="light" mb="1rem">
           Dados pessoais
         </Text>
 
-        <Flex flexDir={['column', 'row']} gap="2rem" >
+        <Flex flexDir={["column", "column", "row"]} gap="1rem">
           <Input
             label="Nome"
             error={
               errors?.nome?.message ? String(errors?.nome?.message) : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("nome")}
           />
           <Input
             label="Sobrenome"
             error={
-              errors?.sobrenome?.message ? String(errors?.sobrenome?.message) : undefined
+              errors?.sobrenome?.message
+                ? String(errors?.sobrenome?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("sobrenome")}
           />
         </Flex>
-        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem'>
-           <Select 
-              label="Gênero"
-              error={
-                errors?.genero?.message
-                  ? String(errors?.genero?.message)
-                  : undefined
-              }
-              {...register("genero")}
-            >
-              <option value='masculino'>Masculino</option>
-              <option value='feminino'>Feminino</option>
-              <option value='outro'>Outro</option>
-            </Select>
+        <Flex flexDir={["column", "column", "row"]} gap="1rem" mt="0.875rem">
+          <Select
+            label="Gênero"
+            error={
+              errors?.genero?.message
+                ? String(errors?.genero?.message)
+                : undefined
+            }
+            isDisabled={userAuth?.tipo !== "administrador"}
+            {...register("genero")}
+          >
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+            <option value="outro">Outro</option>
+          </Select>
           <Input
             label="Data Nascimento"
             type="date"
             error={
-              errors?.dataNascimento?.message ? String(errors?.dataNascimento?.message) : undefined
+              errors?.dataNascimento?.message
+                ? String(errors?.dataNascimento?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("dataNascimento")}
           />
         </Flex>
-        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem'>
+        <Flex flexDir={["column", "column", "row"]} gap="1rem" mt="0.875rem">
           <Input
             label="CPF"
             error={
               errors?.cpf?.message ? String(errors?.cpf?.message) : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("cpf")}
           />
           <Input
             label="Telefone"
             error={
-              errors?.telefone?.message ? String(errors?.telefone?.message) : undefined
+              errors?.telefone?.message
+                ? String(errors?.telefone?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("telefone")}
           />
         </Flex>
 
-        <Text as='h3' fontSize='lg' fontWeight='light' mt='1rem'>
+        <Text as="h3" fontSize="lg" fontWeight="light" mt="1rem">
           Localidade
         </Text>
 
-        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem'>
+        <Flex flexDir={["column", "column", "row"]} gap="1rem" mt="0.875rem">
           <Input
             label="Endereço"
             error={
-              errors?.endereco?.message ? String(errors?.endereco?.message) : undefined
+              errors?.endereco?.message
+                ? String(errors?.endereco?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("endereco")}
           />
           <Input
             label="Estado"
             error={
-              errors?.estado?.message ? String(errors?.estado?.message) : undefined
+              errors?.estado?.message
+                ? String(errors?.estado?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("estado")}
           />
         </Flex>
-        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem'>
+        <Flex flexDir={["column", "column", "row"]} gap="1rem" mt="0.875rem">
           <Input
             label="Cidade"
             error={
-              errors?.cidade?.message ? String(errors?.cidade?.message) : undefined
+              errors?.cidade?.message
+                ? String(errors?.cidade?.message)
+                : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("cidade")}
           />
           <Input
@@ -254,68 +280,66 @@ export function UserCreateAndUpdate({type,user}: UserCreateAndUpdateProps) {
             error={
               errors?.cep?.message ? String(errors?.cep?.message) : undefined
             }
+            isReadOnly={userAuth?.tipo !== "administrador"}
             {...register("cep")}
           />
         </Flex>
 
-        <Text as='h3' fontSize='lg' fontWeight='light' my='1rem'>
+        <Text as="h3" fontSize="lg" fontWeight="light" my="1rem">
           Dados acesso
         </Text>
 
-        <Flex flexDir={['column', 'row']} gap="2rem" >
+        <Flex flexDir={["column", "column", "row"]} gap="1rem">
           <Input
-              label="Matricula"
-              error={
-                errors?.matricula?.message ? String(errors?.matricula?.message) : undefined
-              }
-              {...register("matricula")}
-            />
+            label="Matricula"
+            error={
+              errors?.matricula?.message
+                ? String(errors?.matricula?.message)
+                : undefined
+            }
+            isReadOnly={userAuth?.tipo !== "administrador"}
+            {...register("matricula")}
+          />
         </Flex>
-        
-        <Flex flexDir={['column', 'row']} gap="2rem" mt='0.875rem' >
+
+        <Flex flexDir={["column", "column", "row"]} gap="1rem" mt="0.875rem">
           <Input
-              label="Senha"
-              isPassword
-              error={
-                errors?.senha?.message
-                  ? String(errors?.senha?.message)
-                  : undefined
-              }
-              {...register("senha")}
-            />
-            <Select 
-              label="Tipo"
-              error={
-                errors?.tipo?.message
-                  ? String(errors?.tipo?.message)
-                  : undefined
-              }
-              {...register("tipo")}
-            >
-              <option value='administrador'>Administrador</option>
-              <option value='motorista'>Motorista</option>
-              <option value='administrativo'>Administrativo</option>
-            </Select>
-          </Flex>
+            label="Senha"
+            isPassword
+            error={
+              errors?.senha?.message
+                ? String(errors?.senha?.message)
+                : undefined
+            }
+            isReadOnly={userAuth?.tipo !== "administrador"}
+            {...register("senha")}
+          />
+          <Select
+            label="Tipo"
+            error={
+              errors?.tipo?.message ? String(errors?.tipo?.message) : undefined
+            }
+            isDisabled={userAuth?.tipo !== "administrador"}
+            {...register("tipo")}
+          >
+            <option value="administrador">Administrador</option>
+            <option value="motorista">Motorista</option>
+            <option value="administrativo">Administrativo</option>
+          </Select>
+        </Flex>
 
-        {
-          userAuth?.tipo === 'administrador' && (
-            <Button
-              type="submit"
-              mt="3rem"
-              colorScheme="red"
-              size="lg"
-              isLoading={formState.isSubmitting}
-            >
-              {type ==='update' ?'ALTERAR':'CADASTRAR'}
-            </Button>
-          )
-        }
-
-    
+        {userAuth?.tipo === "administrador" && (
+          <Button
+            type="submit"
+            mt="3rem"
+            colorScheme="red"
+            size="lg"
+            isLoading={formState.isSubmitting}
+          >
+            {type === "update" ? "ALTERAR" : "CADASTRAR"}
+          </Button>
+        )}
       </Flex>
-  
     </>
-  )
-  
+  );
 }

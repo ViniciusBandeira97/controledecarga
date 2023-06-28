@@ -8,36 +8,35 @@ import { Input } from "../../components/Form/Input";
 import { Delivery } from "../../hook/queries/useDelivers";
 import { useCountDate } from "../../hook/useCountDate";
 import api from "../../service/api";
+import { Select } from "../Form/Select";
 
 type UserFormData = {
-  codigo: number
-  localColeta: string
-  material: string
-  peso: number
-  localDescarga: string
-  horarioColeta: Date
-  horarioEntrega: Date
+  codigo: number;
+  localColeta: string;
+  material: string;
+  peso: number;
+  localDescarga: string;
+  horarioColeta: Date;
+  horarioEntrega: Date;
 };
 
-
-
 interface DeliveryUpdateProps {
-  delivery:Delivery
+  delivery: Delivery;
 }
 
-export function DeliveryUpdate({delivery}: DeliveryUpdateProps) {
-  const navigate = useNavigate()
+export function DeliveryUpdate({ delivery }: DeliveryUpdateProps) {
+  const navigate = useNavigate();
 
-  const [_,hour,minute,second] = useCountDate(delivery.horarioColeta)
+  const [_, hour, minute, second] = useCountDate(delivery.horarioColeta);
 
   const userFormSchema = Yup.object().shape({
-    
     codigo: Yup.number().required("Código obrigatório"),
     localColeta: Yup.string().required("Local Coleta obrigatório"),
     material: Yup.string().required("Material obrigatório"),
-    peso: Yup.number().typeError('Informar peso em número').required("Peso obrigatório"),
+    peso: Yup.number()
+      .typeError("Informar peso em número")
+      .required("Peso obrigatório"),
     localDescarga: Yup.string().required("Local Descarga obrigatório"),
-  
   });
 
   const toast = useToast();
@@ -46,109 +45,158 @@ export function DeliveryUpdate({delivery}: DeliveryUpdateProps) {
   });
   const { errors } = formState;
 
-  const updateUser = async (data:UserFormData) => {
-    
-    await api.put(`/delivers/${delivery?.codigo}`, {...data, horarioEntrega: new Date()})
+  const updateUser = async (data: UserFormData) => {
+    await api.put(`/delivers/${delivery?.codigo}`, {
+      ...data,
+      horarioEntrega: new Date(),
+    });
 
     toast({
-      title: 'Usuário alterado com sucesso!',
-      status: 'success',
+      title: "Entrega finalizada com sucesso!",
+      status: "success",
       position: "top",
       isClosable: true,
     });
   };
 
   const HandleUpdate: SubmitHandler<UserFormData> = async (data) => {
-    try {   
-      await updateUser(data)
+    try {
+      await updateUser(data);
 
-      navigate('/delivers')
+      navigate("/delivers");
     } catch (error) {
       toast({
-        title: 'Desculpe, ocorreu um erro interno, Tente novamente mais tarde',
-        status: 'error',
+        title: "Desculpe, ocorreu um erro interno, Tente novamente mais tarde",
+        status: "error",
         position: "top",
         isClosable: true,
       });
     }
   };
 
-  useEffect(()=>{
-    if(delivery){    
-      setValue('codigo', delivery.codigo)
+  useEffect(() => {
+    if (delivery) {
+      setValue("codigo", delivery.codigo);
     }
-  }, [delivery])
-  
+  }, [delivery]);
 
-  return(
+  return (
     <>
       <Flex
         as="form"
-        w='full'
+        w="full"
         maxW={1100}
         bg="white"
-        p='2rem'
+        p="2rem"
         borderRadius={8}
         flexDir="column"
         onSubmit={handleSubmit(HandleUpdate as any)}
       >
-        <Text as='h3' fontSize='lg' fontWeight='light' mb='1rem' >
+        <Text as="h3" fontSize="lg" fontWeight="light" mb="1rem">
           Tempo
         </Text>
 
         <Center>
-          <Stack direction='row' spacing='2rem'>
-            <Flex align='center' flexDir='column'>
-              <Text as='span' bg='gray.100' fontWeight='bold' fontSize='7xl' borderRadius='4px' px='1.8rem'py='0.8rem'>{hour}</Text>
-              <Text fontWeight='light' fontSize='md'>Horas</Text>
+          <Stack direction="row" spacing="2rem">
+            <Flex align="center" flexDir="column">
+              <Text
+                as="span"
+                bg="gray.100"
+                fontWeight="bold"
+                fontSize="7xl"
+                borderRadius="4px"
+                px="1.8rem"
+                py="0.8rem"
+              >
+                {hour}
+              </Text>
+              <Text fontWeight="light" fontSize="md">
+                Horas
+              </Text>
             </Flex>
-            <Flex align='center' flexDir='column'>
-              <Text as='span' bg='gray.100' fontWeight='bold' fontSize='7xl' borderRadius='4px' px='1.8rem'py='0.8rem'>{minute}</Text>
-              <Text fontWeight='light' fontSize='md'>Minutos</Text>
+            <Flex align="center" flexDir="column">
+              <Text
+                as="span"
+                bg="gray.100"
+                fontWeight="bold"
+                fontSize="7xl"
+                borderRadius="4px"
+                px="1.8rem"
+                py="0.8rem"
+              >
+                {minute}
+              </Text>
+              <Text fontWeight="light" fontSize="md">
+                Minutos
+              </Text>
             </Flex>
-            <Flex align='center' flexDir='column'>
-              <Text as='span' bg='gray.100' fontWeight='bold' fontSize='7xl' borderRadius='4px' px='1.8rem'py='0.8rem'>{second}</Text>
-              <Text fontWeight='light' fontSize='md'>Segundos</Text>
+            <Flex align="center" flexDir="column">
+              <Text
+                as="span"
+                bg="gray.100"
+                fontWeight="bold"
+                fontSize="7xl"
+                borderRadius="4px"
+                px="1.8rem"
+                py="0.8rem"
+              >
+                {second}
+              </Text>
+              <Text fontWeight="light" fontSize="md">
+                Segundos
+              </Text>
             </Flex>
           </Stack>
-
         </Center>
 
-        <Text as='h3' fontSize='lg' fontWeight='light' mb='1rem' mt='1rem'>
+        <Text as="h3" fontSize="lg" fontWeight="light" mb="1rem" mt="1rem">
           Dados
         </Text>
 
-        <Flex flexDir={['column', 'row']} gap="2rem" mb='0.875rem'>
-           <Input
+        <Flex flexDir={["column", "row"]} gap="2rem" mb="0.875rem">
+          <Input
             label="Código"
             isReadOnly
             error={
-              errors?.codigo?.message ? String(errors?.codigo?.message) : undefined
+              errors?.codigo?.message
+                ? String(errors?.codigo?.message)
+                : undefined
             }
             {...register("codigo")}
           />
-        
         </Flex>
-        
-        <Flex flexDir={['column', 'row']} gap="2rem" mb='0.875rem'>
+
+        <Flex flexDir={["column", "row"]} gap="2rem" mb="0.875rem">
           <Input
             label="Local coleta"
             error={
-              errors?.localColeta?.message ? String(errors?.localColeta?.message) : undefined
+              errors?.localColeta?.message
+                ? String(errors?.localColeta?.message)
+                : undefined
             }
             {...register("localColeta")}
           />
 
-           <Input
+          <Select
             label="Material"
             error={
-              errors?.material?.message ? String(errors?.material?.message) : undefined
+              errors?.material?.message
+                ? String(errors?.material?.message)
+                : undefined
             }
             {...register("material")}
-          />
+          >
+            <option value="Arame">Arame</option>
+            <option value="Madeira">Madeira</option>
+            <option value="Ferro">Madeira</option>
+            <option value="Carepa">Carepa</option>
+            <option value="Plástico">Plástico</option>
+            <option value="Laminado">Laminado</option>
+            <option value="Escória">Escória</option>
+          </Select>
         </Flex>
 
-        <Flex flexDir={['column', 'row']} gap="2rem" mb='0.875rem'>
+        <Flex flexDir={["column", "row"]} gap="2rem" mb="0.875rem">
           <Input
             label="Peso (KG)"
             type="number"
@@ -158,15 +206,17 @@ export function DeliveryUpdate({delivery}: DeliveryUpdateProps) {
             {...register("peso")}
           />
 
-           <Input
+          <Input
             label="Local Descarga"
             error={
-              errors?.localDescarga?.message ? String(errors?.localDescarga?.message) : undefined
+              errors?.localDescarga?.message
+                ? String(errors?.localDescarga?.message)
+                : undefined
             }
             {...register("localDescarga")}
           />
         </Flex>
-       
+
         <Button
           type="submit"
           mt="3rem"
@@ -176,10 +226,7 @@ export function DeliveryUpdate({delivery}: DeliveryUpdateProps) {
         >
           CONFIRMAR
         </Button>
-        
       </Flex>
-  
     </>
-  )
-  
+  );
 }
