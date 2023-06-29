@@ -63,7 +63,11 @@ export class DeliveryController {
         usuarioId: user?.tipo === 'motorista' ? user.id : undefined,
       },
     })
-    const deliversTotal = await prisma.entrega.count()
+    const deliversTotal = await prisma.entrega.count({
+      where: {
+        usuarioId: user?.tipo === 'motorista' ? user.id : undefined,
+      },
+    })
 
     return res.send({
       delivers,
